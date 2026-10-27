@@ -67,6 +67,9 @@ public class RoundManager : MonoBehaviour
 
     private void Start()
     {
+        #if DEVELOPMENT_BUILD
+            Debug.Log("[DEV] Game initialized");
+        #endif
         if (targetSpawner == null)
         {
             Debug.LogError("spawner hello?????????????");
@@ -97,6 +100,9 @@ public class RoundManager : MonoBehaviour
 
     private void BeginRound()
     {
+        #if DEVELOPMENT_BUILD
+            Debug.Log("[DEV] Round started");
+        #endif
         if (roundRoutine != null)
         {
             StopCoroutine(roundRoutine);
@@ -189,6 +195,9 @@ public class RoundManager : MonoBehaviour
             return;
 
         score = Mathf.Max(0, score + points);
+        #if DEVELOPMENT_BUILD
+            Debug.Log($"[DEV] Score changed: {points:+#;-#;0}, Total: {score}");
+        #endif
         UpdateHUD();
     }
 
@@ -257,7 +266,9 @@ public class RoundManager : MonoBehaviour
 
         state = RoundState.Paused;
         Time.timeScale = 0f;
-
+        #if DEVELOPMENT_BUILD
+            Debug.Log("[DEV] Game paused");
+        #endif
         SetHammerVisible(false);
 
         if (pausePanel != null)
