@@ -47,22 +47,21 @@ public class RoundManager : MonoBehaviour
 
     public bool IsPlaying => state == RoundState.Playing;
 
-
     private void Update()
     {
-        bool escapePressed;
+        WhackInput input = WhackInput.Instance;
 
-        escapePressed = Keyboard.current != null &&
-                        Keyboard.current.escapeKey.wasPressedThisFrame;
-
-
-        if (!escapePressed)
+        if (input == null || !input.PausePressed)
             return;
 
         if (state == RoundState.Playing)
+        {
             PauseRound();
+        }
         else if (state == RoundState.Paused)
+        {
             ResumeRound();
+        }
     }
 
     private void Start()

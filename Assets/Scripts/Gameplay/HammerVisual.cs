@@ -45,11 +45,13 @@ public class HammerVisual : MonoBehaviour
         if (gameCamera == null || impactPoint == null)
             return;
 
-        Mouse mouse = Mouse.current;
-        if (mouse == null)
+
+        WhackInput input = WhackInput.Instance;
+
+        if (input == null)
             return;
 
-        Vector2 mousePos = mouse.position.ReadValue();
+        Vector2 mousePos = input.CursorPosition;
 
         Vector3 targetScreen = new Vector3(
             mousePos.x + screenOffset.x,
@@ -93,7 +95,7 @@ public class HammerVisual : MonoBehaviour
             Quaternion.AngleAxis(currentLift, axis) *
             contactRotation;
 
-        if (mouse.leftButton.wasPressedThisFrame)
+        if (input.StrikePressed)
         {
             if (swingCoroutine != null)
                 StopCoroutine(swingCoroutine);

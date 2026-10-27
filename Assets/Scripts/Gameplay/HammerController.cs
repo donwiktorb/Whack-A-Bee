@@ -36,20 +36,18 @@ public class HammerController : MonoBehaviour
         if ((!soloPlaying && !lanPlaying) || gameCamera == null)
             return;
 
-        Vector2 mousePosition;
 
-        Mouse mouse = Mouse.current;
+        WhackInput input = WhackInput.Instance;
 
-        if (mouse == null ||
-            !mouse.leftButton.wasPressedThisFrame)
+        if (input == null || !input.StrikePressed)
             return;
 
-        mousePosition = mouse.position.ReadValue();
-
+        Vector2 cursorPosition = input.CursorPosition;
 
         Ray ray = gameCamera.ScreenPointToRay(
-            new Vector3(mousePosition.x, mousePosition.y, 0f)
+            new Vector3(cursorPosition.x, cursorPosition.y, 0f)
         );
+
 
         if (!Physics.Raycast(ray, out RaycastHit hit, 100f))
             return;
