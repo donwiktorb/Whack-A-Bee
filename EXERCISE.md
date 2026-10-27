@@ -7,3 +7,7 @@
     - Development - 1219,48 FPS, 173 MB
     - Production - 1604,77 FPS, 109 MB
     - Wersja produkcyjna osiągnęła wydajność wyższą o 31,59%
+2.
+    - Dodano wykrywanie kontrolerów
+    - Dodano sterowanie kontrolerem
+    - Podczas wykrycia kontroleru zmienia tekst w UI
