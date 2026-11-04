@@ -105,8 +105,31 @@ public class WhackInput : MonoBehaviour
     {
         Mouse mouse = Mouse.current;
         Keyboard keyboard = Keyboard.current;
-        Gamepad gamepad = Gamepad.current;
+        Gamepad gamepad = Gamepad.current != null &&
+                        Gamepad.current.added
+            ? Gamepad.current
+            : null;
 
+        ProfileMenuController session = ProfileMenuController.Instance;
+        if (session != null && session.WaitingForController)
+            return;
+        InputDevice owner = session != null && session.IsLoggedIn
+            ? session.PrimaryDevice
+            : null;
+
+        if (owner is Gamepad selectedPad)
+        {
+            if (!selectedPad.added)
+                return;
+
+            mouse = null;
+            keyboard = null;
+            gamepad = selectedPad;
+        }
+        else if (owner is Keyboard || owner is Mouse)
+        {
+            gamepad = null;
+        }
         bool mouseUsed = mouse != null &&
             (mouse.delta.ReadValue().sqrMagnitude > 9f ||
              mouse.leftButton.wasPressedThisFrame);
@@ -162,6 +185,58 @@ public class WhackInput : MonoBehaviour
         cursorPosition.y = Mathf.Clamp(
             cursorPosition.y, 0f, Screen.height
         );
+    }
+    public void BlockGameplayInput()
+    {
+        if (map == null)
+            return;
+
+        map.devices = System.Array.Empty<InputDevice>();
+    }
+    public void SetPrimaryDevice(InputDevice device)
+    {
+        if (map == null)
+            return;
+
+        if (device == null)
+        {
+            map.devices = null;
+            SetActiveDevice(DeviceKind.KeyboardMouse);
+            return;
+        }
+
+        if (device is Keyboard || device is Mouse)
+        {
+            if (Keyboard.current != null && Mouse.current != null)
+            {
+                map.devices = new InputDevice[]
+                {
+                    Keyboard.current,
+                    Mouse.current
+                };
+            }
+            else if (Keyboard.current != null)
+            {
+                map.devices = new InputDevice[] { Keyboard.current };
+            }
+            else if (Mouse.current != null)
+            {
+                map.devices = new InputDevice[] { Mouse.current };
+            }
+            else
+            {
+                map.devices = new InputDevice[0];
+            }
+
+            SetActiveDevice(DeviceKind.KeyboardMouse);
+        }
+        else
+        {
+            map.devices = new InputDevice[] { device };
+
+            if (device is Gamepad pad)
+                SetActiveDevice(IdentifyGamepad(pad));
+        }
     }
 
     private DeviceKind IdentifyGamepad(Gamepad gamepad)

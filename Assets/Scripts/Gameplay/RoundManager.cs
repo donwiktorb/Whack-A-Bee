@@ -47,6 +47,14 @@ public class RoundManager : MonoBehaviour
 
     public bool IsPlaying => state == RoundState.Playing;
 
+    public void LoadProfileScore(string profileId)
+    {
+        highScore = PlayerPrefs.GetInt(
+            LocalProfileStore.GetScoreKey(profileId),
+            0
+        );
+    }
+
     private void Update()
     {
         WhackInput input = WhackInput.Instance;
@@ -76,13 +84,15 @@ public class RoundManager : MonoBehaviour
             return;
         }
 
-        highScore = PlayerPrefs.GetInt("SoloHighScore", 0);
-
+        highScore = 0;
         ReturnToMenu();
     }
 
     public void PlaySolo()
     {
+        if (ProfileMenuController.Instance == null ||
+            !ProfileMenuController.Instance.IsLoggedIn)
+            return;
         if (state != RoundState.Menu)
             return;
 
@@ -172,8 +182,17 @@ public class RoundManager : MonoBehaviour
         {
             highScore = score;
 
-            PlayerPrefs.SetInt("SoloHighScore", highScore);
-            PlayerPrefs.Save();
+            var profile = ProfileMenuController.Instance?.ActiveProfile;
+
+            if (profile != null)
+            {
+                PlayerPrefs.SetInt(
+                    LocalProfileStore.GetScoreKey(profile.id),
+                    highScore
+                );
+
+                PlayerPrefs.Save();
+            }
         }
 
         if (resultScoreText != null)
