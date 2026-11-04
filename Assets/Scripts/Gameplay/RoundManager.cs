@@ -54,10 +54,35 @@ public class RoundManager : MonoBehaviour
             0
         );
     }
+    public void ApplyRestoredHighScore(int restoredScore)
+    {
+        highScore = Mathf.Max(0, restoredScore);
 
+        var profile = ProfileMenuController.Instance?.ActiveProfile;
+
+        if (profile != null)
+        {
+            PlayerPrefs.SetInt(
+                LocalProfileStore.GetScoreKey(profile.id),
+                highScore
+            );
+
+            PlayerPrefs.Save();
+        }
+
+        if (resultBestText != null)
+            resultBestText.text = $"BEST: {highScore:N0}";
+
+        Debug.Log("[Round] Restored best score: " + highScore);
+    }
     private void Update()
     {
         WhackInput input = WhackInput.Instance;
+        if (RoamingSaveManager.Instance != null &&
+            RoamingSaveManager.Instance.HasConflict)
+        {
+            return;
+        }
 
         if (input == null || !input.PausePressed)
             return;
@@ -70,6 +95,7 @@ public class RoundManager : MonoBehaviour
         {
             ResumeRound();
         }
+        
     }
 
     private void Start()
@@ -192,6 +218,7 @@ public class RoundManager : MonoBehaviour
                 );
 
                 PlayerPrefs.Save();
+                RoamingSaveManager.Instance?.SaveHighScore(highScore);
             }
         }
 

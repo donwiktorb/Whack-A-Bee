@@ -434,6 +434,7 @@ public class ProfileMenuController : MonoBehaviour
         if (controllerDisconnectedWarning != null)
             controllerDisconnectedWarning.SetActive(false);
         waitingForInput = true;
+        RoamingSaveManager.Instance?.EndSession();
         ResetSecondPlayer();
         ActiveProfile = null;
         PrimaryDevice = null;
@@ -568,7 +569,7 @@ public class ProfileMenuController : MonoBehaviour
             roundManager.ReturnToMenu();
             roundManager.LoadProfileScore(profile.id);
         }
-
+        RoamingSaveManager.Instance?.SelectProfile(profile);
         pressAnyPanel.SetActive(false);
         profileSelectPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
@@ -607,6 +608,7 @@ public class ProfileMenuController : MonoBehaviour
         if (controllerDisconnectedWarning != null)
             controllerDisconnectedWarning.SetActive(false);
         StopCurrentActivity();
+        RoamingSaveManager.Instance?.EndSession();
         ResetSecondPlayer();
         pendingPrimaryDevice = PrimaryDevice;
 
@@ -635,7 +637,8 @@ public class ProfileMenuController : MonoBehaviour
     private void SetNetworkAvailable(bool available)
     {
         IsNetworkAvailable = available;
-
+        CloudSave.SimulateOffline = !available;
+        RoamingSaveManager.Instance?.OnNetworkChanged(available);
         if (offlineWarning != null)
             offlineWarning.SetActive(!available);
 
