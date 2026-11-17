@@ -12,6 +12,7 @@ public class AchievementCloudSync : MonoBehaviour
     private const string CloudKey = "achievements_v1";
 
     private string activeUserId;
+    private string lastStatusMessage = "";
     private int generation;
     private int cloudVersion;
     private int conflictRetries;
@@ -23,7 +24,19 @@ public class AchievementCloudSync : MonoBehaviour
     {
         Instance = this;
     }
+    private void OnEnable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged +=
+                RefreshStatusLanguage;
+    }
 
+    private void OnDisable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged -=
+                RefreshStatusLanguage;
+    }
     public void SelectProfile(LocalProfile profile)
     {
         EndSession();
@@ -273,13 +286,38 @@ public class AchievementCloudSync : MonoBehaviour
         Synchronize();
     }
 
+
     private void SetStatus(string message)
     {
-        if (statusText != null)
-            statusText.text = message;
+        lastStatusMessage = message;
+        RefreshStatusLanguage();
 
         Debug.Log("[AchievementCloud] " + message);
     }
+
+    private void RefreshStatusLanguage()
+    {
+        if (statusText == null)
+            return;
+
+        const string prefix = "SYNCED - VERSION ";
+
+        if (lastStatusMessage.StartsWith(prefix) &&
+            LocalizationManager.Instance != null)
+        {
+            string version = lastStatusMessage.Substring(prefix.Length);
+
+            statusText.text = LocalizationManager.Instance.Translate(
+                "CLOUD_SYNCED",
+                version
+            );
+        }
+        else
+        {
+            statusText.text = lastStatusMessage;
+        }
+    }
+
 
     private void OnDestroy()
     {

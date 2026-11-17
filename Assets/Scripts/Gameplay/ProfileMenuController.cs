@@ -76,12 +76,85 @@ public class ProfileMenuController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged += RefreshProfileLabels;
         InputSystem.onDeviceChange += HandleDeviceChange;
     }
 
     private void OnDisable()
     {
         InputSystem.onDeviceChange -= HandleDeviceChange;
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged -= RefreshProfileLabels;
+    }
+
+    private void RefreshProfileLabels()
+    {
+        LocalizationManager loc = LocalizationManager.Instance;
+
+        if (loc == null)
+            return;
+
+        if (ActiveProfile != null)
+        {
+            if (activeProfileText != null)
+            {
+                activeProfileText.text = loc.Translate(
+                    "PROFILE_ACTIVE",
+                    ActiveProfile.displayName
+                );
+            }
+
+            if (primaryDeviceText != null)
+            {
+                if (waitingForController)
+                {
+                    primaryDeviceText.text =
+                        loc.Translate("PROFILE_DISCONNECTED");
+                }
+                else
+                {
+                    string deviceName;
+
+                    if (PrimaryDevice is Keyboard ||
+                        PrimaryDevice is Mouse)
+                    {
+                        deviceName = loc.Translate(
+                            "PROFILE_KEYBOARD"
+                        );
+                    }
+                    else if (PrimaryDevice != null)
+                    {
+                        deviceName = PrimaryDevice.displayName;
+                    }
+                    else
+                    {
+                        deviceName = loc.Translate(
+                            "PROFILE_UNKNOWN"
+                        );
+                    }
+
+                    primaryDeviceText.text = loc.Translate(
+                        "PROFILE_DEVICE",
+                        deviceName
+                    );
+                }
+            }
+        }
+
+        if (SecondProfile != null &&
+            playerTwoLabel != null)
+        {
+            string deviceName = SecondDevice != null
+                ? SecondDevice.displayName
+                : loc.Translate("PROFILE_UNKNOWN");
+
+            playerTwoLabel.text = loc.Translate(
+                "PROFILE_PLAYER_TWO",
+                SecondProfile.displayName,
+                deviceName
+            );
+        }
     }
 
     private void HandleDeviceChange(
@@ -144,8 +217,7 @@ public class ProfileMenuController : MonoBehaviour
 
         WhackInput.Instance?.BlockGameplayInput();
 
-        if (primaryDeviceText != null)
-            primaryDeviceText.text = "DEVICE: DISCONNECTED";
+        RefreshProfileLabels();
 
         if (controllerDisconnectedWarning != null)
             controllerDisconnectedWarning.SetActive(true);
@@ -162,7 +234,7 @@ public class ProfileMenuController : MonoBehaviour
         WhackInput.Instance?.SetPrimaryDevice(pad);
 
         if (primaryDeviceText != null)
-            primaryDeviceText.text = "DEVICE: " + pad.displayName;
+            RefreshProfileLabels();
 
         if (controllerDisconnectedWarning != null)
             controllerDisconnectedWarning.SetActive(false);
@@ -296,12 +368,9 @@ public class ProfileMenuController : MonoBehaviour
         CancelSecondPlayerJoin();
 
         if (playerTwoLabel != null)
-        {
-            playerTwoLabel.text =
-                $"P2: {profile.displayName} ({SecondDevice.displayName})";
-
             playerTwoLabel.gameObject.SetActive(true);
-        }
+
+        RefreshProfileLabels();
 
         Debug.Log(
             $"[Profiles] Player 2 joined: {profile.displayName} " +
@@ -580,24 +649,12 @@ public class ProfileMenuController : MonoBehaviour
         mainMenuPanel.SetActive(true);
 
         if (activeProfileText != null)
-        {
             activeProfileText.gameObject.SetActive(true);
-            activeProfileText.text = "PLAYER: " + profile.displayName;
-        }
 
         if (primaryDeviceText != null)
-        {
             primaryDeviceText.gameObject.SetActive(true);
 
-            string deviceName =
-                PrimaryDevice is Keyboard || PrimaryDevice is Mouse
-                    ? "KEYBOARD + MOUSE"
-                    : PrimaryDevice != null
-                        ? PrimaryDevice.displayName
-                        : "UNKNOWN";
-
-            primaryDeviceText.text = "DEVICE: " + deviceName;
-        }
+        RefreshProfileLabels();
 
         Debug.Log(
             $"[Profiles] {profile.displayName} logged in using " +

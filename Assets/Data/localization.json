@@ -1,0 +1,452 @@
+{
+    "entries": [
+        {
+            "key": "MENU_PLAY",
+            "en": "PLAY SOLO",
+            "pl": "GRAJ SOLO",
+            "de": "ALLEINE SPIELEN",
+            "ja": "ソロプレイ"
+        },
+        {
+            "key": "MENU_LAN",
+            "en": "LAN MULTIPLAYER",
+            "pl": "GRA SIECIOWA",
+            "de": "LOKALES NETZWERKSPIEL",
+            "ja": "LANマルチプレイ"
+        },
+        {
+            "key": "MENU_SETTINGS",
+            "en": "SETTINGS",
+            "pl": "USTAWIENIA",
+            "de": "EINSTELLUNGEN",
+            "ja": "設定"
+        },
+        {
+            "key": "MENU_ACHIEVEMENTS",
+            "en": "ACHIEVEMENTS",
+            "pl": "OSIĄGNIĘCIA",
+            "de": "ERRUNGENSCHAFTEN",
+            "ja": "実績"
+        },
+        {
+            "key": "MENU_QUIT",
+            "en": "QUIT",
+            "pl": "WYJDŹ",
+            "de": "BEENDEN",
+            "ja": "終了"
+        },
+        {
+            "key": "MENU_BACK",
+            "en": "BACK",
+            "pl": "WRÓĆ",
+            "de": "ZURÜCK",
+            "ja": "戻る"
+        },
+        {
+            "key": "MENU_SWITCH_USER",
+            "en": "SWITCH USER",
+            "pl": "ZMIEŃ UŻYTKOWNIKA",
+            "de": "BENUTZER WECHSELN",
+            "ja": "ユーザー切替"
+        },
+        {
+            "key": "START_PRESS_ANY",
+            "en": "PRESS ANY BUTTON",
+            "pl": "NACIŚNIJ DOWOLNY PRZYCISK",
+            "de": "DRÜCKE EINE BELIEBIGE TASTE",
+            "ja": "ボタンを押してください"
+        },
+        {
+            "key": "PROFILE_SELECT",
+            "en": "SELECT PROFILE",
+            "pl": "WYBIERZ PROFIL",
+            "de": "PROFIL AUSWÄHLEN",
+            "ja": "プロフィール選択"
+        },
+        {
+            "key": "PROFILE_CREATE",
+            "en": "CREATE PROFILE",
+            "pl": "UTWÓRZ PROFIL",
+            "de": "NEUES PROFIL ERSTELLEN",
+            "ja": "プロフィール作成"
+        },
+        {
+            "key": "SETTINGS_LANGUAGE",
+            "en": "LANGUAGE",
+            "pl": "JĘZYK",
+            "de": "SPRACHE",
+            "ja": "言語"
+        },
+        {
+            "key": "SETTINGS_FULLSCREEN",
+            "en": "FULLSCREEN",
+            "pl": "PEŁNY EKRAN",
+            "de": "VOLLBILDMODUS",
+            "ja": "全画面表示"
+        },
+        {
+            "key": "SETTINGS_MASTER",
+            "en": "MASTER VOLUME",
+            "pl": "GŁOŚNOŚĆ GŁÓWNA",
+            "de": "GESAMTLAUTSTÄRKE",
+            "ja": "マスター音量"
+        },
+        {
+            "key": "SETTINGS_SFX",
+            "en": "SOUND EFFECTS",
+            "pl": "EFEKTY DŹWIĘKOWE",
+            "de": "SOUNDEFFEKTE",
+            "ja": "効果音"
+        },
+        {
+            "key": "HUD_SCORE",
+            "en": "SCORE: {0:N0}",
+            "pl": "WYNIK: {0:N0}",
+            "de": "PUNKTZAHL: {0:N0}",
+            "ja": "スコア: {0:N0}"
+        },
+        {
+            "key": "HUD_TIME",
+            "en": "TIME: {0}",
+            "pl": "CZAS: {0}",
+            "de": "ZEIT: {0}",
+            "ja": "残り時間: {0}"
+        },
+        {
+            "key": "HUD_COUNTDOWN",
+            "en": "START IN: {0}",
+            "pl": "START ZA: {0}",
+            "de": "START IN: {0}",
+            "ja": "開始まで: {0}"
+        },
+        {
+            "key": "RESULT_SCORE",
+            "en": "SCORE: {0:N0}",
+            "pl": "WYNIK: {0:N0}",
+            "de": "PUNKTZAHL: {0:N0}",
+            "ja": "スコア: {0:N0}"
+        },
+        {
+            "key": "RESULT_BEST",
+            "en": "BEST: {0:N0}",
+            "pl": "REKORD: {0:N0}",
+            "de": "REKORD: {0:N0}",
+            "ja": "最高記録: {0:N0}"
+        },
+        {
+            "key": "ACHIEVEMENT_TITLE",
+            "en": "ACHIEVEMENTS",
+            "pl": "OSIĄGNIĘCIA",
+            "de": "ERRUNGENSCHAFTEN",
+            "ja": "実績"
+        },
+        {
+            "key": "ACHIEVEMENT_UNLOCKED",
+            "en": "ACHIEVEMENT UNLOCKED!",
+            "pl": "ODBLOCKOWANO OSIĄGNIĘCIE!",
+            "de": "ERRUNGENSCHAFT FREIGESCHALTET!",
+            "ja": "実績を解除しました！"
+        },
+        {
+            "key": "CLOUD_OFFLINE",
+            "en": "OFFLINE - CONNECTION LOST",
+            "pl": "OFFLINE - BRAK POŁĄCZENIA",
+            "de": "OFFLINE - VERBINDUNG VERLOREN",
+            "ja": "オフライン - 接続なし"
+        },
+        {
+            "key": "ACH_FIRST_BEE_NAME",
+            "en": "First Bee",
+            "pl": "Pierwsza pszczoła",
+            "de": "Erste Biene",
+            "ja": "初めてのハチ"
+        },
+        {
+            "key": "ACH_FIRST_BEE_DESC",
+            "en": "Hit your first bee.",
+            "pl": "Traf pierwszą pszczołę.",
+            "de": "Triff deine erste Biene.",
+            "ja": "初めてハチを叩く。"
+        },
+        {
+            "key": "ACH_BEE_10_NAME",
+            "en": "Bee Hunter",
+            "pl": "Łowca pszczół",
+            "de": "Bienenjäger",
+            "ja": "ハチハンター"
+        },
+        {
+            "key": "ACH_BEE_10_DESC",
+            "en": "Hit 10 bees in total.",
+            "pl": "Traf łącznie 10 pszczół.",
+            "de": "Triff insgesamt 10 Bienen.",
+            "ja": "ハチを合計10匹叩く。"
+        },
+        {
+            "key": "ACH_BEE_50_NAME",
+            "en": "Bee Slayer",
+            "pl": "Pogromca pszczół",
+            "de": "Bienenbezwinger",
+            "ja": "ハチスレイヤー"
+        },
+        {
+            "key": "ACH_BEE_50_DESC",
+            "en": "Hit 50 bees in total.",
+            "pl": "Traf łącznie 50 pszczół.",
+            "de": "Triff insgesamt 50 Bienen.",
+            "ja": "ハチを合計50匹叩く。"
+        },
+        {
+            "key": "ACH_BEE_200_NAME",
+            "en": "Bee Legend",
+            "pl": "Legenda pszczół",
+            "de": "Bienenlegende",
+            "ja": "ハチの伝説"
+        },
+        {
+            "key": "ACH_BEE_200_DESC",
+            "en": "Hit 200 bees in total.",
+            "pl": "Traf łącznie 200 pszczół.",
+            "de": "Triff insgesamt 200 Bienen.",
+            "ja": "ハチを合計200匹叩く。"
+        },
+        {
+            "key": "ACH_FIRST_ROUND_NAME",
+            "en": "First Round",
+            "pl": "Pierwsza runda",
+            "de": "Erste Runde",
+            "ja": "初めてのラウンド"
+        },
+        {
+            "key": "ACH_FIRST_ROUND_DESC",
+            "en": "Complete your first solo round.",
+            "pl": "Ukończ pierwszą rundę solo.",
+            "de": "Schließe deine erste Solorunde ab.",
+            "ja": "初めてのソロラウンドを完了する。"
+        },
+        {
+            "key": "ACH_ROUND_5_NAME",
+            "en": "Getting Started",
+            "pl": "Dobry początek",
+            "de": "Guter Anfang",
+            "ja": "順調なスタート"
+        },
+        {
+            "key": "ACH_ROUND_5_DESC",
+            "en": "Complete 5 solo rounds.",
+            "pl": "Ukończ 5 rund solo.",
+            "de": "Schließe 5 Solorunden ab.",
+            "ja": "ソロラウンドを5回完了する。"
+        },
+        {
+            "key": "ACH_ROUND_20_NAME",
+            "en": "Veteran",
+            "pl": "Weteran",
+            "de": "Veteran",
+            "ja": "ベテラン"
+        },
+        {
+            "key": "ACH_ROUND_20_DESC",
+            "en": "Complete 20 solo rounds.",
+            "pl": "Ukończ 20 rund solo.",
+            "de": "Schließe 20 Solorunden ab.",
+            "ja": "ソロラウンドを20回完了する。"
+        },
+        {
+            "key": "ACH_SCORE_1000_NAME",
+            "en": "Four Digits",
+            "pl": "Cztery cyfry",
+            "de": "Vierstellig",
+            "ja": "4桁達成"
+        },
+        {
+            "key": "ACH_SCORE_1000_DESC",
+            "en": "Score 1000 points in one round.",
+            "pl": "Zdobądź 1000 punktów w jednej rundzie.",
+            "de": "Erziele 1000 Punkte in einer Runde.",
+            "ja": "1ラウンドで1000ポイント獲得する。"
+        },
+        {
+            "key": "ACH_SCORE_2000_NAME",
+            "en": "High Scorer",
+            "pl": "Mistrz punktów",
+            "de": "Punkteprofi",
+            "ja": "ハイスコア"
+        },
+        {
+            "key": "ACH_SCORE_2000_DESC",
+            "en": "Score 2000 points in one round.",
+            "pl": "Zdobądź 2000 punktów w jednej rundzie.",
+            "de": "Erziele 2000 Punkte in einer Runde.",
+            "ja": "1ラウンドで2000ポイント獲得する。"
+        },
+        {
+            "key": "ACH_CLEAN_ROUND_NAME",
+            "en": "Careful Hands",
+            "pl": "Ostrożne ręce",
+            "de": "Vorsichtige Hände",
+            "ja": "慎重な一撃"
+        },
+        {
+            "key": "ACH_CLEAN_ROUND_DESC",
+            "en": "Complete a round without hitting bombs.",
+            "pl": "Ukończ rundę bez trafienia bomby.",
+            "de": "Beende eine Runde, ohne eine Bombe zu treffen.",
+            "ja": "爆弾を叩かずにラウンドを完了する。"
+        },
+        {
+            "key": "ACH_SETTINGS_NAME",
+            "en": "Custom Setup",
+            "pl": "Własne ustawienia",
+            "de": "Eigene Einstellungen",
+            "ja": "こだわりの設定"
+        },
+        {
+            "key": "ACH_SETTINGS_DESC",
+            "en": "Change a game setting.",
+            "pl": "Zmień ustawienie gry.",
+            "de": "Ändere eine Spieleinstellung.",
+            "ja": "ゲーム設定を変更する。"
+        },
+        {
+            "key": "ACH_CLEAN_5_NAME",
+            "en": "Untouchable",
+            "pl": "Nietykalny",
+            "de": "Unantastbar",
+            "ja": "無傷の達人"
+        },
+        {
+            "key": "ACH_CLEAN_5_DESC",
+            "en": "Complete 5 rounds without hitting bombs.",
+            "pl": "Ukończ 5 rund bez trafienia bomby.",
+            "de": "Beende 5 Runden, ohne Bomben zu treffen.",
+            "ja": "爆弾を叩かずに5ラウンド完了する。"
+        },
+        {
+            "key": "ACH_STATUS_LOCKED",
+            "en": "LOCKED",
+            "pl": "ZABLOKOWANE",
+            "de": "GESPERRT",
+            "ja": "未解除"
+        },
+        {
+            "key": "ACH_STATUS_UNLOCKED",
+            "en": "UNLOCKED",
+            "pl": "ODBLOKOWANE",
+            "de": "FREIGESCHALTET",
+            "ja": "解除済み"
+        },
+        {
+            "key": "ACH_HIDDEN_DESC",
+            "en": "Hidden achievement",
+            "pl": "Ukryte osiągnięcie",
+            "de": "Geheime Errungenschaft",
+            "ja": "隠し実績"
+        },
+        {
+            "key": "ACH_PROGRESS",
+            "en": "Progress: {0}/{1}",
+            "pl": "Postęp: {0}/{1}",
+            "de": "Fortschritt: {0}/{1}",
+            "ja": "進捗: {0}/{1}"
+        },
+        {
+            "key": "ACH_POINTS",
+            "en": "{0} PTS",
+            "pl": "{0} PKT",
+            "de": "{0} PKT",
+            "ja": "{0} ポイント"
+        },
+        {
+            "key": "ACH_SUMMARY",
+            "en": "ACHIEVEMENTS: {0}/{1}\nPOINTS: {2}/{3}",
+            "pl": "OSIĄGNIĘCIA: {0}/{1}\nPUNKTY: {2}/{3}",
+            "de": "ERRUNGENSCHAFTEN: {0}/{1}\nPUNKTE: {2}/{3}",
+            "ja": "実績: {0}/{1}\nポイント: {2}/{3}"
+        },
+        {
+            "key": "ACH_TOAST_POINTS",
+            "en": "+{0} POINTS",
+            "pl": "+{0} PUNKTÓW",
+            "de": "+{0} PUNKTE",
+            "ja": "+{0} ポイント"
+        },
+        {
+            "key": "PROFILE_ACTIVE",
+            "en": "PLAYER: {0}",
+            "pl": "GRACZ: {0}",
+            "de": "SPIELER: {0}",
+            "ja": "プレイヤー: {0}"
+        },
+        {
+            "key": "PROFILE_DEVICE",
+            "en": "DEVICE: {0}",
+            "pl": "URZĄDZENIE: {0}",
+            "de": "EINGABEGERÄT: {0}",
+            "ja": "入力機器: {0}"
+        },
+        {
+            "key": "PROFILE_DISCONNECTED",
+            "en": "DEVICE: DISCONNECTED",
+            "pl": "URZĄDZENIE: ODŁĄCZONE",
+            "de": "EINGABEGERÄT: GETRENNT",
+            "ja": "入力機器: 切断されました"
+        },
+        {
+            "key": "PROFILE_KEYBOARD",
+            "en": "KEYBOARD + MOUSE",
+            "pl": "KLAWIATURA + MYSZ",
+            "de": "TASTATUR + MAUS",
+            "ja": "キーボード + マウス"
+        },
+        {
+            "key": "PROFILE_UNKNOWN",
+            "en": "UNKNOWN",
+            "pl": "NIEZNANE",
+            "de": "UNBEKANNT",
+            "ja": "不明"
+        },
+        {
+            "key": "PROFILE_PLAYER_TWO",
+            "en": "P2: {0} ({1})",
+            "pl": "G2: {0} ({1})",
+            "de": "S2: {0} ({1})",
+            "ja": "P2: {0} ({1})"
+        },
+        {
+            "key": "CLOUD_CHECKING",
+            "en": "Checking cloud...",
+            "pl": "Sprawdzanie chmury...",
+            "de": "Cloud wird überprüft...",
+            "ja": "クラウドを確認中..."
+        },
+        {
+            "key": "CLOUD_SYNCED",
+            "en": "SYNCED - VERSION {0}",
+            "pl": "ZSYNCHRONIZOWANO - WERSJA {0}",
+            "de": "SYNCHRONISIERT - VERSION {0}",
+            "ja": "同期完了 - バージョン {0}"
+        },
+        {
+            "key": "CLOUD_PENDING",
+            "en": "OFFLINE - SAVE PENDING",
+            "pl": "OFFLINE - ZAPIS OCZEKUJE",
+            "de": "OFFLINE - SPEICHERUNG AUSSTEHEND",
+            "ja": "オフライン - 保存待機中"
+        },
+        {
+            "key": "CLOUD_RESTORED",
+            "en": "CLOUD RESTORED - VERSION {0}",
+            "pl": "PRZYWRÓCONO Z CHMURY - WERSJA {0}",
+            "de": "AUS CLOUD WIEDERHERGESTELLT - VERSION {0}",
+            "ja": "クラウドから復元 - バージョン {0}"
+        },
+        {
+            "key": "CLOUD_CONFLICT",
+            "en": "SAVE CONFLICT - DECISION REQUIRED",
+            "pl": "KONFLIKT ZAPISU - WYMAGANY WYBÓR",
+            "de": "SPEICHERKONFLIKT - AUSWAHL ERFORDERLICH",
+            "ja": "保存データの競合 - 選択が必要です"
+        }
+    ]
+}

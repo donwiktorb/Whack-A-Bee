@@ -30,6 +30,10 @@ public class AchievementListUI : MonoBehaviour
 
         if (manager != null)
             manager.ProgressChanged += Refresh;
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged += Refresh;
+        }
     }
 
     public void Open()
@@ -61,6 +65,7 @@ public class AchievementListUI : MonoBehaviour
             achievementsPanel.SetActive(false);
     }
 
+   
     public void Refresh()
     {
         if (manager == null)
@@ -73,8 +78,7 @@ public class AchievementListUI : MonoBehaviour
         int unlockedCount = 0;
         int totalCount = 0;
 
-        foreach (AchievementDefinition achievement
-                 in manager.Definitions)
+        foreach (AchievementDefinition achievement in manager.Definitions)
         {
             totalCount++;
             totalPoints += achievement.points;
@@ -90,38 +94,63 @@ public class AchievementListUI : MonoBehaviour
             if (achievement.hidden && !unlocked)
             {
                 builder.AppendLine(
-                    "<color=#888888>LOCKED  ???</color>"
+                    "<color=#888888>" +
+                    AchievementManager.Localized(
+                        "ACH_STATUS_LOCKED", "LOCKED"
+                    ) +
+                    "  ???</color>"
                 );
 
-                builder.AppendLine("Hidden achievement");
+                builder.AppendLine(
+                    AchievementManager.Localized(
+                        "ACH_HIDDEN_DESC", "Hidden achievement"
+                    )
+                );
+
                 builder.AppendLine();
                 continue;
             }
 
             string status = unlocked
-                ? "<color=#66DD88>UNLOCKED</color>"
-                : "<color=#AAAAAA>LOCKED</color>";
+                ? "<color=#66DD88>" +
+                AchievementManager.Localized(
+                    "ACH_STATUS_UNLOCKED", "UNLOCKED"
+                ) + "</color>"
+                : "<color=#AAAAAA>" +
+                AchievementManager.Localized(
+                    "ACH_STATUS_LOCKED", "LOCKED"
+                ) + "</color>";
 
             builder.AppendLine(
-                $"{status}  {achievement.name}"
+                status + "  " + manager.GetLocalizedName(achievement)
             );
 
-            builder.AppendLine(achievement.description);
+            builder.AppendLine(
+                manager.GetLocalizedDescription(achievement)
+            );
+
+            string points = AchievementManager.Localized(
+                "ACH_POINTS", "{0} PTS", achievement.points
+            );
 
             if (unlocked)
             {
                 builder.AppendLine(
-                    $"<color=#66DD88>+{achievement.points} PTS</color>"
+                    "<color=#66DD88>+" + points + "</color>"
                 );
             }
             else
             {
                 int progress = manager.GetProgress(achievement.id);
 
-                builder.AppendLine(
-                    $"Progress: {progress}/{achievement.target}" +
-                    $"  |  {achievement.points} PTS"
+                string progressText = AchievementManager.Localized(
+                    "ACH_PROGRESS",
+                    "Progress: {0}/{1}",
+                    progress,
+                    achievement.target
                 );
+
+                builder.AppendLine(progressText + " | " + points);
             }
 
             builder.AppendLine();
@@ -132,11 +161,17 @@ public class AchievementListUI : MonoBehaviour
 
         if (summaryText != null)
         {
-            summaryText.text =
-                $"ACHIEVEMENTS: {unlockedCount}/{totalCount}\n" +
-                $"POINTS: {earnedPoints}/{totalPoints}";
+            summaryText.text = AchievementManager.Localized(
+                "ACH_SUMMARY",
+                "ACHIEVEMENTS: {0}/{1}\nPOINTS: {2}/{3}",
+                unlockedCount,
+                totalCount,
+                earnedPoints,
+                totalPoints
+            );
         }
     }
+
 
     private void OnDestroy()
     {
@@ -145,5 +180,9 @@ public class AchievementListUI : MonoBehaviour
 
         if (Instance == this)
             Instance = null;
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged -= Refresh;
+        }
     }
 }

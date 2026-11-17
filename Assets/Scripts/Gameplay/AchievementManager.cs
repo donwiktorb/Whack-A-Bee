@@ -71,6 +71,36 @@ public class AchievementManager : MonoBehaviour
 
     public event Action<AchievementDefinition> AchievementUnlocked;
     public event Action ProgressChanged;
+    private AchievementDefinition activeToast;
+
+
+
+    private void Start()
+    {
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged +=
+                RefreshActiveToast;
+        }
+    }
+
+    private void RefreshActiveToast()
+    {
+        if (activeToast == null || toastText == null)
+            return;
+
+        toastText.text =
+            Localized(
+                "ACHIEVEMENT_UNLOCKED",
+                "ACHIEVEMENT UNLOCKED!"
+            ) + "\n" +
+            GetLocalizedName(activeToast) + "\n" +
+            Localized(
+                "ACH_TOAST_POINTS",
+                "+{0} POINTS",
+                activeToast.points
+            );
+    }
 
     private void Awake()
     {
@@ -154,6 +184,42 @@ public class AchievementManager : MonoBehaviour
         }
 
         return snapshot;
+    }
+
+    public static string Localized(
+        string key,
+        string fallback,
+        params object[] args)
+    {
+        LocalizationManager loc = LocalizationManager.Instance;
+
+        if (loc != null)
+        {
+            string translated = loc.Translate(key, args);
+
+            if (translated != "#" + key)
+                return translated;
+        }
+
+        return args != null && args.Length > 0
+            ? string.Format(fallback, args)
+            : fallback;
+    }
+
+    public string GetLocalizedName(AchievementDefinition achievement)
+    {
+        return Localized(
+            achievement.id + "_NAME",
+            achievement.name
+        );
+    }
+
+    public string GetLocalizedDescription(AchievementDefinition achievement)
+    {
+        return Localized(
+            achievement.id + "_DESC",
+            achievement.description
+        );
     }
 
     public void MergeCloud(AchievementSaveData remote)
@@ -260,6 +326,7 @@ public class AchievementManager : MonoBehaviour
 
     public void EndSession()
     {
+        activeToast = null;
         SaveLocal(true);
 
         activeUserId = null;
@@ -431,19 +498,14 @@ public class AchievementManager : MonoBehaviour
             PlayerPrefs.Save();
     }
 
+   
     private IEnumerator ShowToasts()
     {
         while (toastQueue.Count > 0)
         {
-            AchievementDefinition achievement = toastQueue.Dequeue();
+            activeToast = toastQueue.Dequeue();
 
-            if (toastText != null)
-            {
-                toastText.text =
-                    "ACHIEVEMENT UNLOCKED!\n" +
-                    achievement.name + "\n" +
-                    $"+{achievement.points} POINTS";
-            }
+            RefreshActiveToast();
 
             if (toastPanel != null)
                 toastPanel.SetActive(true);
@@ -456,8 +518,10 @@ public class AchievementManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.3f);
         }
 
+        activeToast = null;
         toastRoutine = null;
     }
+
 
     [ContextMenu("Achievements / Print Progress")]
     private void PrintProgress()
@@ -515,6 +579,11 @@ public class AchievementManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged -=
+                RefreshActiveToast;
+        }
         if (Instance == this)
         {
             EndSession();

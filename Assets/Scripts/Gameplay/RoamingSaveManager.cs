@@ -12,7 +12,7 @@ public class RoamingSaveManager : MonoBehaviour
 
     private const string CloudKey = "solo_best_v1";
     private const string LocalPrefix = "WhackABee.Roaming.v1.";
-
+    private string lastStatusMessage = "";
     [Serializable]
     private class LocalData
     {
@@ -56,6 +56,19 @@ public class RoamingSaveManager : MonoBehaviour
             Debug.LogError("[Roaming] Cloud Space is missing!");
     }
 
+    private void OnEnable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged +=
+                RefreshStatusLanguage;
+    }
+
+    private void OnDisable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged -=
+                RefreshStatusLanguage;
+    }
     public void SelectProfile(LocalProfile profile)
     {
         if (profile == null)
@@ -478,13 +491,79 @@ public class RoamingSaveManager : MonoBehaviour
             round.ApplyRestoredHighScore(score);
     }
 
+
     private void SetStatus(string message)
     {
-        if (statusText != null)
-            statusText.text = message;
+        lastStatusMessage = message;
+        RefreshStatusLanguage();
 
         Debug.Log("[Roaming] " + message);
     }
+
+    private void RefreshStatusLanguage()
+    {
+        if (statusText == null)
+            return;
+
+        LocalizationManager loc = LocalizationManager.Instance;
+
+        if (loc == null)
+        {
+            statusText.text = lastStatusMessage;
+            return;
+        }
+
+        string key = null;
+        object[] args = Array.Empty<object>();
+
+        switch (lastStatusMessage)
+        {
+            case "Checking cloud...":
+                key = "CLOUD_CHECKING";
+                break;
+
+            case "OFFLINE - SAVE PENDING":
+                key = "CLOUD_PENDING";
+                break;
+
+            case "SAVE CONFLICT - DECISION REQUIRED":
+                key = "CLOUD_CONFLICT";
+                break;
+        }
+
+        const string syncedPrefix = "SYNCED - VERSION ";
+        const string restoredPrefix = "CLOUD RESTORED - VERSION ";
+
+        if (lastStatusMessage.StartsWith(syncedPrefix))
+        {
+            key = "CLOUD_SYNCED";
+            args = new object[]
+            {
+                lastStatusMessage.Substring(syncedPrefix.Length)
+            };
+        }
+        else if (lastStatusMessage.StartsWith(restoredPrefix))
+        {
+            key = "CLOUD_RESTORED";
+            args = new object[]
+            {
+                lastStatusMessage.Substring(restoredPrefix.Length)
+            };
+        }
+
+        if (key == null)
+        {
+            statusText.text = lastStatusMessage;
+            return;
+        }
+
+        string translated = loc.Translate(key, args);
+
+        statusText.text = translated == "#" + key
+            ? lastStatusMessage
+            : translated;
+    }
+
 
     private void OnDestroy()
     {

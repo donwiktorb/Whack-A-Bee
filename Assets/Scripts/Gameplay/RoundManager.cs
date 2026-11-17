@@ -42,10 +42,50 @@ public class RoundManager : MonoBehaviour
     private Coroutine roundRoutine;
 
     private float timeRemaining;
+    private int countdownSeconds = 3;
     private int score;
     private int highScore;
 
     public bool IsPlaying => state == RoundState.Playing;
+
+    private void OnEnable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged += RefreshLanguage;
+    }
+
+    private void OnDisable()
+    {
+        if (LocalizationManager.Instance != null)
+            LocalizationManager.Instance.LanguageChanged -= RefreshLanguage;
+    }
+
+    private string L(string key, string fallback, params object[] args)
+    {
+        if (LocalizationManager.Instance != null)
+            return LocalizationManager.Instance.Translate(key, args);
+
+        return string.Format(fallback, args);
+    }
+
+    private void RefreshLanguage()
+    {
+        UpdateHUD();
+        UpdateResultTexts();
+    }
+
+    private void UpdateResultTexts()
+    {
+        if (resultScoreText != null)
+            resultScoreText.text = L(
+                "RESULT_SCORE", "SCORE: {0:N0}", score
+            );
+
+        if (resultBestText != null)
+            resultBestText.text = L(
+                "RESULT_BEST", "BEST: {0:N0}", highScore
+            );
+    }
 
     public void LoadProfileScore(string profileId)
     {
@@ -70,8 +110,7 @@ public class RoundManager : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        if (resultBestText != null)
-            resultBestText.text = $"BEST: {highScore:N0}";
+        UpdateResultTexts();
 
         Debug.Log("[Round] Restored best score: " + highScore);
     }
@@ -170,17 +209,17 @@ public class RoundManager : MonoBehaviour
     {
         for (int i = 3; i >= 1; i--)
         {
-            if (timeText != null)
-                timeText.text = $"START IN: {i}";
+            countdownSeconds = i;
+            UpdateHUD();
 
             yield return new WaitForSeconds(1f);
         }
-
         state = RoundState.Playing;
+
+        LocalizedVoiceLine.Instance?.PlayRoundStart();
 
         SetHammerVisible(true);
         targetSpawner.StartSpawning();
-
         UpdateHUD();
 
         while (timeRemaining > 0f)
@@ -223,11 +262,7 @@ public class RoundManager : MonoBehaviour
             }
         }
 
-        if (resultScoreText != null)
-            resultScoreText.text = $"SCORE: {score:N0}";
-
-        if (resultBestText != null)
-            resultBestText.text = $"BEST: {highScore:N0}";
+        UpdateResultTexts();
 
         if (resultsPanel != null)
             resultsPanel.SetActive(true);
@@ -288,15 +323,25 @@ public class RoundManager : MonoBehaviour
 #endif
     }
 
+
     private void UpdateHUD()
     {
         if (scoreText != null)
-            scoreText.text = $"SCORE: {score:N0}";
+        {
+            scoreText.text = L(
+                "HUD_SCORE", "SCORE: {0:N0}", score
+            );
+        }
 
         if (timeText != null)
-            timeText.text =
-                $"TIME: {Mathf.CeilToInt(timeRemaining)}";
+        {
+            timeText.text = state == RoundState.Countdown
+                ? L("HUD_COUNTDOWN", "START IN: {0}", countdownSeconds)
+                : L("HUD_TIME", "TIME: {0}",
+                    Mathf.CeilToInt(timeRemaining));
+        }
     }
+
 
     private void SetHammerVisible(bool visible)
     {
