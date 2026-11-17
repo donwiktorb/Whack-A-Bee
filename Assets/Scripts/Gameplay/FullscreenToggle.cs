@@ -29,6 +29,7 @@ public class FullscreenToggle : MonoBehaviour
 
         PlayerPrefs.SetInt(SaveKey, fullscreen ? 1 : 0);
         PlayerPrefs.Save();
+        AchievementManager.Instance?.SettingChanged();
     }
 
     private void ApplyFullscreen(bool fullscreen)

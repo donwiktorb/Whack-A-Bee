@@ -147,6 +147,7 @@ public class RoundManager : MonoBehaviour
         targetSpawner.StopSpawning();
 
         state = RoundState.Countdown;
+        AchievementManager.Instance?.RoundStarted();
         score = 0;
         timeRemaining = Mathf.Max(1f, roundDuration);
 
@@ -200,7 +201,7 @@ public class RoundManager : MonoBehaviour
     private void FinishRound()
     {
         state = RoundState.Finished;
-
+        AchievementManager.Instance?.RoundFinished(score);
         targetSpawner.StopSpawning();
         SetHammerVisible(false);
 

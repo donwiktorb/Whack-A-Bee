@@ -428,6 +428,8 @@ public class ProfileMenuController : MonoBehaviour
 
     public void ShowStartup()
     {
+        AchievementCloudSync.Instance?.EndSession();
+        AchievementListUI.Instance?.CloseForSessionEnd();
         waitingForController = false;
         resumeRoundAfterReconnect = false;
 
@@ -435,6 +437,7 @@ public class ProfileMenuController : MonoBehaviour
             controllerDisconnectedWarning.SetActive(false);
         waitingForInput = true;
         RoamingSaveManager.Instance?.EndSession();
+        AchievementManager.Instance?.EndSession();
         ResetSecondPlayer();
         ActiveProfile = null;
         PrimaryDevice = null;
@@ -570,6 +573,8 @@ public class ProfileMenuController : MonoBehaviour
             roundManager.LoadProfileScore(profile.id);
         }
         RoamingSaveManager.Instance?.SelectProfile(profile);
+        AchievementManager.Instance?.SelectProfile(profile);
+        AchievementCloudSync.Instance?.SelectProfile(profile);
         pressAnyPanel.SetActive(false);
         profileSelectPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
@@ -602,6 +607,8 @@ public class ProfileMenuController : MonoBehaviour
 
     public void SwitchUser()
     {
+        AchievementCloudSync.Instance?.EndSession();
+        AchievementListUI.Instance?.CloseForSessionEnd();
         waitingForController = false;
         resumeRoundAfterReconnect = false;
 
@@ -609,6 +616,7 @@ public class ProfileMenuController : MonoBehaviour
             controllerDisconnectedWarning.SetActive(false);
         StopCurrentActivity();
         RoamingSaveManager.Instance?.EndSession();
+        AchievementManager.Instance?.EndSession();
         ResetSecondPlayer();
         pendingPrimaryDevice = PrimaryDevice;
 
@@ -638,6 +646,7 @@ public class ProfileMenuController : MonoBehaviour
     {
         IsNetworkAvailable = available;
         CloudSave.SimulateOffline = !available;
+        AchievementCloudSync.Instance?.OnNetworkChanged(available);
         RoamingSaveManager.Instance?.OnNetworkChanged(available);
         if (offlineWarning != null)
             offlineWarning.SetActive(!available);

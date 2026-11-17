@@ -1,0 +1,112 @@
+{
+    "achievements": [
+        {
+            "id": "ACH_FIRST_BEE",
+            "name": "First Bee",
+            "description": "Hit your first bee.",
+            "points": 20,
+            "condition": "bee_hit",
+            "target": 1,
+            "hidden": false
+        },
+        {
+            "id": "ACH_BEE_10",
+            "name": "Bee Hunter",
+            "description": "Hit 10 bees in total.",
+            "points": 40,
+            "condition": "bee_hit",
+            "target": 10,
+            "hidden": false
+        },
+        {
+            "id": "ACH_BEE_50",
+            "name": "Bee Slayer",
+            "description": "Hit 50 bees in total.",
+            "points": 80,
+            "condition": "bee_hit",
+            "target": 50,
+            "hidden": false
+        },
+        {
+            "id": "ACH_BEE_200",
+            "name": "Bee Legend",
+            "description": "Hit 200 bees in total.",
+            "points": 150,
+            "condition": "bee_hit",
+            "target": 200,
+            "hidden": false
+        },
+        {
+            "id": "ACH_FIRST_ROUND",
+            "name": "First Round",
+            "description": "Complete your first solo round.",
+            "points": 20,
+            "condition": "round_completed",
+            "target": 1,
+            "hidden": false
+        },
+        {
+            "id": "ACH_ROUND_5",
+            "name": "Getting Started",
+            "description": "Complete 5 solo rounds.",
+            "points": 50,
+            "condition": "round_completed",
+            "target": 5,
+            "hidden": false
+        },
+        {
+            "id": "ACH_ROUND_20",
+            "name": "Veteran",
+            "description": "Complete 20 solo rounds.",
+            "points": 150,
+            "condition": "round_completed",
+            "target": 20,
+            "hidden": false
+        },
+        {
+            "id": "ACH_SCORE_1000",
+            "name": "Four Digits",
+            "description": "Score 1000 points in one round.",
+            "points": 70,
+            "condition": "round_score",
+            "target": 1000,
+            "hidden": false
+        },
+        {
+            "id": "ACH_SCORE_2000",
+            "name": "High Scorer",
+            "description": "Score 2000 points in one round.",
+            "points": 100,
+            "condition": "round_score",
+            "target": 2000,
+            "hidden": false
+        },
+        {
+            "id": "ACH_CLEAN_ROUND",
+            "name": "Careful Hands",
+            "description": "Complete a round without hitting bombs.",
+            "points": 120,
+            "condition": "clean_round",
+            "target": 1,
+            "hidden": false
+        },
+        {
+            "id": "ACH_SETTINGS",
+            "name": "Custom Setup",
+            "description": "Change a game setting.",
+            "points": 50,
+            "condition": "settings_change",
+            "target": 1,
+            "hidden": false
+        },
+        {
+            "id": "ACH_CLEAN_5",
+            "name": "Untouchable",
+            "description": "Complete 5 rounds without hitting bombs.",
+            "points": 150,
+            "condition": "clean_round",
+            "target": 5,
+            "hidden": true
+        }
+    ]
+}
