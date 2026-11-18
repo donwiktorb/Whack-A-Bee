@@ -12,6 +12,12 @@ public class RoamingSaveManager : MonoBehaviour
 
     private const string CloudKey = "solo_best_v1";
     private const string LocalPrefix = "WhackABee.Roaming.v1.";
+    private const string SignedMarkerPrefix =
+    "WhackABee.Roaming.Signed.v1.";
+
+    private bool localTampered;
+
+    public bool HasIntegrityFailure => localTampered;
     private string lastStatusMessage = "";
     [Serializable]
     private class LocalData
@@ -79,10 +85,19 @@ public class RoamingSaveManager : MonoBehaviour
         activeUserId = profile.id;
         local = LoadLocal(activeUserId);
 
-        if (local.exists)
-            ApplyScore(local.bestScore);
+        if (localTampered)
+        {
+            ApplyScore(0);
+            SetStatus("CHEAT DETECTED - RESTORING FROM CLOUD");
+        }
+        else
+        {
+            if (local.exists)
+                ApplyScore(local.bestScore);
 
-        SetStatus("Checking cloud...");
+            SetStatus("Checking cloud...");
+        }
+
         Synchronize();
     }
 
@@ -96,7 +111,7 @@ public class RoamingSaveManager : MonoBehaviour
         busy = false;
         queued = false;
         revision = 0;
-
+        localTampered = false;
         HasConflict = false;
     }
 
@@ -137,66 +152,132 @@ public class RoamingSaveManager : MonoBehaviour
         ProfileMenuController.Instance?.SimulateLogout();
     }
 
+
     private LocalData LoadLocal(string userId)
     {
-        string json = PlayerPrefs.GetString(
+        string raw = PlayerPrefs.GetString(
             LocalPrefix + userId, ""
         );
 
-        if (!string.IsNullOrEmpty(json))
-        {
-            try
-            {
-                LocalData data = JsonUtility.FromJson<LocalData>(json);
+        bool previouslySigned = PlayerPrefs.GetInt(
+            SignedMarkerPrefix + userId, 0
+        ) == 1;
 
-                if (data != null && data.exists)
-                    return data;
-            }
-            catch (Exception e)
+        if (!string.IsNullOrEmpty(raw))
+        {
+            if (SignedLocalSave.TryVerify(
+                    userId, raw, out string verifiedJson))
             {
-                Debug.LogWarning("[Roaming] Local load: " + e.Message);
+                if (TryParseLocal(verifiedJson, out LocalData verified))
+                    return verified;
             }
+
+            else if (!previouslySigned &&
+                    raw.TrimStart().StartsWith("{") &&
+                    TryParseLocal(raw, out LocalData legacy))
+            {
+                SaveSigned(userId, legacy);
+
+                Debug.Log("[DRM] Existing local save signed.");
+                return legacy;
+            }
+
+            localTampered = true;
+
+            Debug.LogError(
+                "[DRM] LOCAL SAVE TAMPERING DETECTED! " +
+                "Ignoring modified local progress."
+            );
+
+            return new LocalData();
         }
 
         LocalData fresh = new LocalData();
 
-        string oldKey = LocalProfileStore.GetScoreKey(userId);
 
-        if (PlayerPrefs.HasKey(oldKey))
+        if (!previouslySigned)
         {
-            fresh.exists = true;
-            fresh.bestScore = Mathf.Max(0, PlayerPrefs.GetInt(oldKey));
-            fresh.pending = true;
-            fresh.savedUtcTicks = DateTime.UtcNow.Ticks;
+            string oldKey = LocalProfileStore.GetScoreKey(userId);
 
-            PlayerPrefs.SetString(
-                LocalPrefix + userId,
-                JsonUtility.ToJson(fresh)
-            );
-            PlayerPrefs.Save();
+            if (PlayerPrefs.HasKey(oldKey))
+            {
+                fresh.exists = true;
+                fresh.bestScore = Mathf.Max(
+                    0, PlayerPrefs.GetInt(oldKey)
+                );
+                fresh.pending = true;
+                fresh.savedUtcTicks = DateTime.UtcNow.Ticks;
+
+                SaveSigned(userId, fresh);
+            }
         }
 
         return fresh;
     }
+
+    private static bool TryParseLocal(
+        string json,
+        out LocalData data)
+    {
+        data = null;
+
+        if (string.IsNullOrWhiteSpace(json) ||
+            !json.Contains("\"exists\"") ||
+            !json.Contains("\"bestScore\""))
+            return false;
+
+        try
+        {
+            data = JsonUtility.FromJson<LocalData>(json);
+
+            return data != null &&
+                data.bestScore >= 0 &&
+                data.baseVersion >= 0 &&
+                data.savedUtcTicks >= 0;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private void SaveSigned(string userId, LocalData data)
+    {
+        string json = JsonUtility.ToJson(data);
+
+        PlayerPrefs.SetString(
+            LocalPrefix + userId,
+            SignedLocalSave.Sign(userId, json)
+        );
+
+        PlayerPrefs.SetInt(
+            SignedMarkerPrefix + userId, 1
+        );
+
+        PlayerPrefs.Save();
+    }
+
 
     private void PersistLocal()
     {
         if (local == null || activeUserId == null)
             return;
 
-        PlayerPrefs.SetString(
-            LocalPrefix + activeUserId,
-            JsonUtility.ToJson(local)
-        );
-
-        PlayerPrefs.Save();
+        SaveSigned(activeUserId, local);
     }
+
 
     public void SaveHighScore(int bestScore)
     {
         if (activeUserId == null || local == null)
             return;
-
+        if (localTampered)
+        {
+            Debug.LogWarning(
+                "[DRM] Save blocked until integrity is restored."
+            );
+            return;
+        }
         bestScore = Mathf.Max(0, bestScore);
 
         if (!local.exists || local.bestScore != bestScore)
@@ -224,9 +305,12 @@ public class RoamingSaveManager : MonoBehaviour
         }
         else
         {
-            SetStatus(local != null && local.pending
-                ? "OFFLINE - SAVE PENDING"
-                : "OFFLINE");
+            if (!localTampered)
+                SetStatus(local != null && local.pending
+                    ? "OFFLINE - SAVE PENDING"
+                    : "OFFLINE");
+            else
+                SetStatus("CHEAT DETECTED - CONNECT TO RECOVER SAVE");
         }
     }
 
@@ -243,7 +327,10 @@ public class RoamingSaveManager : MonoBehaviour
 
         if (CloudSave.SimulateOffline)
         {
-            SetStatus("OFFLINE - LOCAL SAVE ACTIVE");
+            SetStatus(localTampered
+                ? "CHEAT DETECTED - CONNECT TO RECOVER SAVE"
+                : "OFFLINE - LOCAL SAVE ACTIVE");
+
             return;
         }
 
@@ -272,6 +359,19 @@ public class RoamingSaveManager : MonoBehaviour
 
     private void ProcessCloudLoad(CloudSave.Result result)
     {
+        if (localTampered && !result.found)
+        {
+            localTampered = false;
+            local = new LocalData();
+
+            PersistLocal();
+
+            SetStatus(
+                "CHEAT DETECTED - NO CLOUD BACKUP, NEW SAVE"
+            );
+
+            return;
+        }
         if (!result.found)
         {
             if (local.exists)
@@ -421,6 +521,8 @@ public class RoamingSaveManager : MonoBehaviour
 
     private void AcceptCloud(int score, int version)
     {
+        bool recoveredFromTampering = localTampered;
+        localTampered = false;
         local.exists = true;
         local.bestScore = score;
         local.baseVersion = version;
@@ -431,8 +533,9 @@ public class RoamingSaveManager : MonoBehaviour
 
         PersistLocal();
         ApplyScore(score);
-
-        SetStatus("CLOUD RESTORED - VERSION " + version);
+        SetStatus(recoveredFromTampering
+            ? "CHEAT DETECTED - CLOUD SAVE RESTORED"
+            : "CLOUD RESTORED - VERSION " + version);
     }
 
     private void RegisterConflict(CloudSave.Result result, int score)

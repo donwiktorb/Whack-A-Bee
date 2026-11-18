@@ -43,10 +43,24 @@ public class RoundManager : MonoBehaviour
 
     private float timeRemaining;
     private int countdownSeconds = 3;
+    [Header("Anti-Cheat")]
+    [SerializeField] private TMP_Text cheatWarningText;
+
+    private ProtectedScore scoreProtection;
+    private bool scoreTampered;
+
+    public bool HasIntegrityViolation => scoreTampered;
     private int score;
     private int highScore;
 
     public bool IsPlaying => state == RoundState.Playing;
+
+
+
+    private void Awake()
+    {
+        scoreProtection = new ProtectedScore();
+    }
 
     private void OnEnable()
     {
@@ -67,6 +81,50 @@ public class RoundManager : MonoBehaviour
 
         return string.Format(fallback, args);
     }
+
+    private void VerifyScoreIntegrity()
+    {
+        if (scoreTampered || scoreProtection.IsValid(score))
+            return;
+
+        scoreTampered = true;
+
+        score = 0;
+        scoreProtection.Set(0);
+
+        if (cheatWarningText != null)
+        {
+            cheatWarningText.text =
+                "CHEAT DETECTED!\n" +
+                "Score reset. Round invalid.";
+
+            cheatWarningText.gameObject.SetActive(true);
+        }
+
+        Debug.LogError(
+            "[AntiCheat] Score integrity violation detected! " +
+            "Score reset. This round cannot save progress."
+        );
+    }
+
+    #if UNITY_EDITOR || DEVELOPMENT_BUILD
+    [ContextMenu("AntiCheat / Simulate Score Tampering")]
+    private void SimulateScoreTampering()
+    {
+        if (state != RoundState.Playing)
+        {
+            Debug.LogWarning(
+                "[AntiCheat] Start a solo round first."
+            );
+            return;
+        }
+
+        scoreProtection.SimulateTampering();
+
+        VerifyScoreIntegrity();
+        UpdateHUD();
+    }
+    #endif
 
     private void RefreshLanguage()
     {
@@ -122,7 +180,14 @@ public class RoundManager : MonoBehaviour
         {
             return;
         }
-
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (Keyboard.current != null &&
+            Keyboard.current.f10Key.wasPressedThisFrame)
+        {
+            SimulateScoreTampering();
+            return;
+        }
+        #endif
         if (input == null || !input.PausePressed)
             return;
 
@@ -155,20 +220,46 @@ public class RoundManager : MonoBehaviour
 
     public void PlaySolo()
     {
+        if (!WebSitelock.IsAllowed)
+            return;
+        if (RoamingSaveManager.Instance != null &&
+            RoamingSaveManager.Instance.HasIntegrityFailure)
+        {
+            Debug.LogWarning(
+                "[DRM] Local save failed integrity verification. " +
+                "Connect to the cloud before playing."
+            );
+            return;
+        }
         if (ProfileMenuController.Instance == null ||
             !ProfileMenuController.Instance.IsLoggedIn)
             return;
         if (state != RoundState.Menu)
             return;
-
+        if (LicenseGate.Instance == null ||
+            !LicenseGate.Instance.IsLicensed)
+            return;
         BeginRound();
     }
 
     public void RestartRound()
     {
+        if (!WebSitelock.IsAllowed)
+            return;
+        if (RoamingSaveManager.Instance != null &&
+            RoamingSaveManager.Instance.HasIntegrityFailure)
+        {
+            Debug.LogWarning(
+                "[DRM] Local save failed integrity verification. " +
+                "Connect to the cloud before playing."
+            );
+            return;
+        }
         if (state != RoundState.Finished)
             return;
-
+        if (LicenseGate.Instance == null ||
+            !LicenseGate.Instance.IsLicensed)
+            return;
         BeginRound();
     }
 
@@ -188,6 +279,11 @@ public class RoundManager : MonoBehaviour
         state = RoundState.Countdown;
         AchievementManager.Instance?.RoundStarted();
         score = 0;
+        scoreTampered = false;
+        scoreProtection.Set(0);
+
+        if (cheatWarningText != null)
+            cheatWarningText.gameObject.SetActive(false);
         timeRemaining = Mathf.Max(1f, roundDuration);
 
         if (mainMenuPanel != null)
@@ -239,12 +335,14 @@ public class RoundManager : MonoBehaviour
 
     private void FinishRound()
     {
+        VerifyScoreIntegrity();
         state = RoundState.Finished;
-        AchievementManager.Instance?.RoundFinished(score);
+        if (!scoreTampered)
+            AchievementManager.Instance?.RoundFinished(score);
         targetSpawner.StopSpawning();
         SetHammerVisible(false);
 
-        if (score > highScore)
+        if (!scoreTampered && score > highScore)
         {
             highScore = score;
 
@@ -275,7 +373,13 @@ public class RoundManager : MonoBehaviour
         if (!IsPlaying)
             return;
 
+        VerifyScoreIntegrity();
+
+        if (scoreTampered)
+            return;
+
         score = Mathf.Max(0, score + points);
+        scoreProtection.Set(score);
         #if DEVELOPMENT_BUILD
             Debug.Log($"[DEV] Score changed: {points:+#;-#;0}, Total: {score}");
         #endif
@@ -326,6 +430,8 @@ public class RoundManager : MonoBehaviour
 
     private void UpdateHUD()
     {
+        if (state == RoundState.Playing)
+            VerifyScoreIntegrity();
         if (scoreText != null)
         {
             scoreText.text = L(

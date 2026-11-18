@@ -497,6 +497,7 @@ public class ProfileMenuController : MonoBehaviour
 
     public void ShowStartup()
     {
+        LicenseGate.Instance?.EndSession();
         AchievementCloudSync.Instance?.EndSession();
         AchievementListUI.Instance?.CloseForSessionEnd();
         waitingForController = false;
@@ -514,7 +515,9 @@ public class ProfileMenuController : MonoBehaviour
 
         WhackInput.Instance?.SetPrimaryDevice(null);
 
-        SetNetworkAvailable(true);
+        SetNetworkAvailable(
+            PlayerPrefs.GetInt("WhackABee.SimulatedOffline", 0) == 0
+        );
 
         pressAnyPanel.SetActive(true);
         profileSelectPanel.SetActive(false);
@@ -655,7 +658,7 @@ public class ProfileMenuController : MonoBehaviour
             primaryDeviceText.gameObject.SetActive(true);
 
         RefreshProfileLabels();
-
+        LicenseGate.Instance?.SelectProfile(profile);
         Debug.Log(
             $"[Profiles] {profile.displayName} logged in using " +
             $"{PrimaryDevice?.displayName ?? "Unknown"}"
@@ -664,6 +667,7 @@ public class ProfileMenuController : MonoBehaviour
 
     public void SwitchUser()
     {
+        LicenseGate.Instance?.EndSession();
         AchievementCloudSync.Instance?.EndSession();
         AchievementListUI.Instance?.CloseForSessionEnd();
         waitingForController = false;
@@ -703,11 +707,16 @@ public class ProfileMenuController : MonoBehaviour
     {
         IsNetworkAvailable = available;
         CloudSave.SimulateOffline = !available;
+        LicenseGate.Instance?.OnNetworkChanged(available);
         AchievementCloudSync.Instance?.OnNetworkChanged(available);
         RoamingSaveManager.Instance?.OnNetworkChanged(available);
         if (offlineWarning != null)
             offlineWarning.SetActive(!available);
-
+        PlayerPrefs.SetInt(
+            "WhackABee.SimulatedOffline",
+            available ? 0 : 1
+        );
+        PlayerPrefs.Save();
         Debug.Log(available
             ? "[Platform] Connection restored"
             : "[Platform] Connection lost (simulated)");

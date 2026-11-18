@@ -123,8 +123,10 @@ public class HammerController : MonoBehaviour
         }
         else if (soloPlaying && target.MultiplayerBeat < 0)
         {
-            AchievementManager.Instance?.TargetHit(points);
             roundManager.AddPoints(points);
+
+            if (!roundManager.HasIntegrityViolation)
+                AchievementManager.Instance?.TargetHit(points);
         }
     }
 }

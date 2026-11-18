@@ -67,3 +67,19 @@
     - Zaimplementowano podmianę grafiki zależnie od wybranego regionu
     - Dodano kwestie głosowe w 4 językach odtwarzane podczas rozpoczynania rundy
     - Zaimplementowano automatyczny wybór nagrania na podstawie języka interfejsu
+7.
+    - Zaimplementowano system DRM z weryfikacją licencji przypisanej do profilu użytkownika
+    - Dodano ekran blokady gry z możliwością wygenerowania i aktywowania klucza licencyjnego
+    - Zintegrowano system licencji z DSW Cloud API
+    - Dodano obsługę jednorazowych kluczy licencyjnych przypisanych do konkretnego użytkownika
+    - Zaimplementowano zapisywanie licencji lokalnie i automatyczne sprawdzanie jej podczas logowania
+    - Dodano tryb offline umożliwiający uruchomienie gry przez 7 dni od ostatniej poprawnej weryfikacji
+    - Zaimplementowano ochronę wyniku gracza za pomocą maskowania XOR i sumy kontrolnej
+    - Dodano wykrywanie manipulacji chronioną wartością i resetowanie wyniku po wykryciu oszustwa
+    - Dodano możliwość symulacji modyfikacji pamięci za pomocą klawisza F10 w wersji deweloperskiej
+    - Zaimplementowano podpisywanie lokalnego zapisu za pomocą HMAC-SHA256
+    - Dodano wykrywanie nieautoryzowanej modyfikacji zapisu i przywracanie danych z chmury
+    - Zaimplementowano blokadę uruchamiania wersji WebGL na niedozwolonych domenach
+    - Dodano możliwość symulacji niedozwolonej domeny w Unity Editor
+    - Dodano test weryfikacji operacji po stronie serwera DSW Cloud API
+    - Przetestowano akceptowanie poprawnej operacji +50 i odrzucanie nieprawidłowej operacji +5000

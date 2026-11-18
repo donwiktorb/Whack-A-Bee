@@ -35,6 +35,10 @@ public class LANMenuController : MonoBehaviour
 
     public void OpenLanMenu()
     {
+        if (!WebSitelock.IsAllowed ||
+            LicenseGate.Instance == null ||
+            !LicenseGate.Instance.IsLicensed)
+            return;
         mainMenuPanel.SetActive(false);
         lobbyPanel.SetActive(false);
         lanMenuPanel.SetActive(true);
@@ -44,6 +48,10 @@ public class LANMenuController : MonoBehaviour
 
     public void HostGame()
     {
+        if (!WebSitelock.IsAllowed ||
+            LicenseGate.Instance == null ||
+            !LicenseGate.Instance.IsLicensed)
+            return;
         if (NetworkServer.active || NetworkClient.active)
             return;
 
@@ -70,6 +78,10 @@ public class LANMenuController : MonoBehaviour
 
     public void FindGame()
     {
+        if (!WebSitelock.IsAllowed ||
+            LicenseGate.Instance == null ||
+            !LicenseGate.Instance.IsLicensed)
+            return;
         if (NetworkServer.active || NetworkClient.active)
             return;
 
